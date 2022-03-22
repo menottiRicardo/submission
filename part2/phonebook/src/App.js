@@ -3,6 +3,7 @@ import Filter from "./components/Filter";
 import Form from "./components/Form";
 import Persons from "./components/Persons";
 import axios from "axios";
+import phonebookService from "./services/phonebook";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -12,21 +13,43 @@ const App = () => {
 
   const addNewName = (event) => {
     event.preventDefault();
-    const namesArray = persons.map((person) => person.name);
-    const check = namesArray.includes(newName);
-    if (check) {
-      alert(`${newName} is already added to the phonebook`);
+    const personExist = persons.filter(
+      (person) => person.name === newName
+    );
+
+    console.log(personExist);
+    if (personExist.length !== 0) {
+      const message = window.confirm(
+        `${personExist[0].name} is already added to the phonebook, replace the old number with a new one?`
+      );
+      if (!message) return;
+      phonebookService
+        .update(personExist[0].id, {
+          name: newName,
+          number: newNumber,
+        })
+        .then((data) =>
+          setPersons(
+            persons.map((person) =>
+              person.id !== personExist[0].id ? person : data
+            )
+          )
+        );
+
       setNewName("");
+      setNewNumber("");
       return;
     }
 
-    setPersons(
-      persons.concat({
+    phonebookService
+      .create({
         name: newName,
         number: newNumber,
-        id: persons.length + 1,
       })
-    );
+      .then((data) => setPersons(persons.concat(data)));
+
+    setNewName("");
+    setNewNumber("");
   };
 
   const personsToShow = persons.filter(
@@ -39,6 +62,18 @@ const App = () => {
     );
     setPersons(data);
   }, []);
+
+  const deletePerson = (id) => {
+    const person = persons.filter((person) => person.id === id);
+    console.log(person);
+
+    const message = window.confirm("Delete");
+    if (message === false) return;
+    phonebookService
+      .eliminate(id)
+      .then((data) => console.log("data", data));
+    setPersons(persons.filter((person) => person.id !== id));
+  };
 
   return (
     <div>
@@ -59,7 +94,7 @@ const App = () => {
 
       <h2>Numbers</h2>
 
-      <Persons persons={personsToShow} />
+      <Persons persons={personsToShow} deletePerson={deletePerson} />
     </div>
   );
 };

@@ -1,9 +1,15 @@
-import React from 'react'
+import React from "react";
 
-const Person = ({name, number}) => {
+const Person = ({ name, number, onClick }) => {
   return (
-   <p>{name} {number}</p>
-  )
-}
+    <>
+      <span>
+        {name} {number}
+      </span>
+      <button onClick={onClick}>delete</button>
+      <br />
+    </>
+  );
+};
 
-export default Person
+export default Person;
