@@ -6,7 +6,7 @@ export const Country = ({ name, data, single }) => {
   const [show, setShow] = useState(false);
   const { flags, languages, area, capital, latlng } = data;
 
-  const languagesList = Object.values(languages);
+  
   if (single) {
     return (
       <>
