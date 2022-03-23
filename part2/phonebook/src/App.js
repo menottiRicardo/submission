@@ -4,20 +4,23 @@ import Form from "./components/Form";
 import Persons from "./components/Persons";
 import axios from "axios";
 import phonebookService from "./services/phonebook";
+import Notification from "./components/Notification";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [filter, setFilter] = useState("");
+  const [errorMessage, setErrorMessage] = useState({
+    message: null,
+    type: null,
+  });
 
   const addNewName = (event) => {
     event.preventDefault();
     const personExist = persons.filter(
       (person) => person.name === newName
     );
-
-    console.log(personExist);
     if (personExist.length !== 0) {
       const message = window.confirm(
         `${personExist[0].name} is already added to the phonebook, replace the old number with a new one?`
@@ -38,6 +41,10 @@ const App = () => {
 
       setNewName("");
       setNewNumber("");
+      setErrorMessage({
+        message: `${newName}s number has been changed succesfully`,
+        type: "success",
+      });
       return;
     }
 
@@ -48,8 +55,13 @@ const App = () => {
       })
       .then((data) => setPersons(persons.concat(data)));
 
+    setErrorMessage({
+      message: `Added ${newName}`,
+      type: "success",
+    });
     setNewName("");
     setNewNumber("");
+    return;
   };
 
   const personsToShow = persons.filter(
@@ -71,14 +83,24 @@ const App = () => {
     if (message === false) return;
     phonebookService
       .eliminate(id)
-      .then((data) => console.log("data", data));
-    setPersons(persons.filter((person) => person.id !== id));
+      .then((data) =>
+        setPersons(persons.filter((person) => person.id !== id))
+      )
+      .catch(() =>
+        setErrorMessage({
+          message: `Information of ${person.name} has already been removed from server`,
+          type: "error",
+        })
+      );
   };
 
   return (
     <div>
       <h2>Phonebook</h2>
-
+      <Notification
+        message={errorMessage.message}
+        type={errorMessage.type}
+      />
       <Filter
         filter={filter}
         onChange={(event) => setFilter(event.target.value)}
