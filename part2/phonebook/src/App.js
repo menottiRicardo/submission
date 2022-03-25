@@ -70,7 +70,7 @@ const App = () => {
 
   useEffect(async () => {
     const { data, ...restOfIt } = await axios.get(
-      "http://localhost:3001/persons"
+      "/api/persons"
     );
     setPersons(data);
   }, []);
