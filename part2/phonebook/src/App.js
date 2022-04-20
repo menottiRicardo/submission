@@ -37,6 +37,12 @@ const App = () => {
               person.id !== personExist[0].id ? person : data
             )
           )
+        )
+        .catch((err) =>
+          setErrorMessage({
+            message: `${newName}s number has been changed succesfully`,
+            type: "error",
+          })
         );
 
       setNewName("");
@@ -48,12 +54,19 @@ const App = () => {
       return;
     }
 
+    console.log(newName,newNumber)
     phonebookService
       .create({
         name: newName,
         number: newNumber,
       })
-      .then((data) => setPersons(persons.concat(data)));
+      .then((data) => setPersons(persons.concat(data)))
+      .catch((err) =>
+        setErrorMessage({
+          message: `${newName} is too short, minimum allowed is length (3)`,
+          type: "error",
+        })
+      );
 
     setErrorMessage({
       message: `Added ${newName}`,
@@ -69,9 +82,7 @@ const App = () => {
   );
 
   useEffect(async () => {
-    const { data, ...restOfIt } = await axios.get(
-      "/api/persons"
-    );
+    const { data, ...restOfIt } = await axios.get("/api/persons");
     setPersons(data);
   }, []);
 
