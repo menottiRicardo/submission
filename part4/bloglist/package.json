@@ -4,13 +4,14 @@
   "description": "submission part4",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js",
-    "dev": "nodemon index.js"
+    "dev": "nodemon index.js",
+    "test": "jest --verbose"
   },
   "author": "Ricardo Menotti",
   "license": "MIT",
   "devDependencies": {
+    "jest": "^27.5.1",
     "nodemon": "^2.0.15"
   },
   "dependencies": {
@@ -18,6 +19,10 @@
     "dotenv": "^16.0.0",
     "express": "^4.17.3",
     "http": "^0.0.1-security",
+    "lodash": "^4.17.21",
     "moongose": "^1.0.0"
+  },
+  "jest": {
+    "testEnvironment": "node"
   }
 }
